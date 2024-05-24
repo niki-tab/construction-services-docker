@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+
+  frontend:
+    container_name: frontend-container
+    build: ./construction_frontend_app
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    volumes:
+      - ./construction_frontend_app:/app
+      - /app/node_modules
+      - /app/.next
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command: yarn dev
