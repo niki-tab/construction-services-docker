@@ -2,6 +2,31 @@ version: "3.8"
 
 services:
 
+  backend-mysql-database:
+    container_name: backend-mysql-container
+    image: mysql/mysql-server:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: construction_backend_app_database
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - ${MYSQL_HOST_PORT}:3306
+    volumes:
+      - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./.docker/mysql/mysql-initdb.sql:/docker-entrypoint-initdb.d/mysql-initdb.sql:ro
+      
+  backend:
+    container_name: backend-container
+    build: ./docker/backend
+    ports:
+      - "${BACKEND_PORT}:8000"
+    volumes:
+      - ./construction-backend-app:/var/www
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command: php artisan serve --host 0.0.0.0 --port=8000
+
   frontend:
     container_name: frontend-container
     build: ./construction-frontend-app
